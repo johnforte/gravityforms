@@ -3114,8 +3114,6 @@ class GFCommon {
 			if ( headers_sent() && ! $disable_print_form_script ) {
 				GFFormDisplay::print_form_scripts( $form, $is_ajax );
 			} else {
-				var_dump($form);
-				die('sdfsdfsdfdsf');
 				GFFormDisplay::enqueue_form_scripts( $form, $is_ajax );
 			}
 		}
