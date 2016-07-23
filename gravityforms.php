@@ -612,7 +612,8 @@ class GFForms {
 		$sql             = 'CREATE TABLE ' . $form_table_name . " (
               id mediumint(8) unsigned not null auto_increment,
               title varchar(150) not null,
-              date_created datetime not null,
+              slug varchar(150) not null,
+	      date_created datetime not null,
               is_active tinyint(1) not null default 1,
               is_trash tinyint(1) not null default 0,
               PRIMARY KEY  (id)

@@ -286,7 +286,7 @@ class GFFormsModel {
 
 		$order_by     = ! empty( $sort_column ) ? "ORDER BY $sort_column $sort_keyword" : '';
 
-		$sql = "SELECT f.id, f.title, f.date_created, f.is_active, 0 as lead_count, 0 view_count
+		$sql = "SELECT f.id, f.title,f.slug, f.date_created, f.is_active, 0 as lead_count, 0 view_count
                 FROM $form_table_name f
                 $where_clause
                 $order_by";
@@ -1035,7 +1035,7 @@ class GFFormsModel {
 			 */
 			do_action( 'gform_post_form_activated', $form_id );
 		} else {
-			
+
 			/**
 			 * Fires after an active form gets marked as inactive
 			 *
@@ -1407,6 +1407,7 @@ class GFFormsModel {
 		$meta          = self::get_form_meta( $form_id );
 		$meta['title'] = $title;
 		$meta['id']    = $new_id;
+		$meta['slug']  = sanitize_title($title);
 
 		$notifications = $meta['notifications'];
 		$confirmations = $meta['confirmations'];
@@ -1467,7 +1468,7 @@ class GFFormsModel {
 		$form_table_name = $wpdb->prefix . 'rg_form';
 
 		//creating new form
-		$wpdb->query( $wpdb->prepare( "INSERT INTO $form_table_name(title, date_created) VALUES(%s, utc_timestamp())", $form_title ) );
+		$wpdb->query( $wpdb->prepare( "INSERT INTO $form_table_name(title, slug, date_created) VALUES(%s,%s, utc_timestamp())", $form_title,sanitize_title($form_title )));
 
 		//returning newly created form id
 		return $wpdb->insert_id;
@@ -1480,6 +1481,9 @@ class GFFormsModel {
 		$form_meta = gf_apply_filters( array( 'gform_form_update_meta', $form_id ), $form_meta, $form_id, $meta_name );
 
 		$meta_table_name = self::get_meta_table_name();
+		if($meta_name=='display_meta'){
+			$form_meta['slug']=sanitize_title($form_meta['title']);
+		}
 		$form_meta       = json_encode( $form_meta );
 
 		if ( intval( $wpdb->get_var( $wpdb->prepare( "SELECT count(0) FROM $meta_table_name WHERE form_id=%d", $form_id ) ) ) > 0 ) {
@@ -1548,7 +1552,7 @@ class GFFormsModel {
 	public static function delete_files_by_form( $form_id, $status = '' ) {
 		global $wpdb;
 		$form   = self::get_form_meta( $form_id );
-		
+
 		// Default field types to delete
 		$field_types = array( 'fileupload', 'post_image' );
 
@@ -2303,7 +2307,7 @@ class GFFormsModel {
 			return GFCommon::clean_number( $text, $number_format );
 		}
 		*/
-		
+
 		$number_format = 'decimal_dot';
 		if ( GFCommon::is_numeric( $text, $number_format ) ) {
 			return GFCommon::clean_number( $text, $number_format );
@@ -3328,6 +3332,7 @@ class GFFormsModel {
 		 * @param array $form       The Form Object for the form used to create the post
 		 */
 		gf_do_action( array( 'gform_after_create_post', $form['id'] ), $post_id, $lead, $form );
+		gf_do_action( array( 'gform_after_create_post', $form['slug'] ), $post_id, $lead, $form );
 
 		return $post_id;
 	}
@@ -5907,4 +5912,3 @@ function gform_delete_meta( $entry_id, $meta_key = '' ) {
 	//clears cache.
 	$_gform_lead_meta = array();
 }
-

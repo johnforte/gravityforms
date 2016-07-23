@@ -1732,7 +1732,7 @@ class GFCommon {
 	}
 
 	public static function send_email( $from, $to, $bcc, $reply_to, $subject, $message, $from_name = '', $message_format = 'html', $attachments = '', $entry = false, $notification = false ) {
-		
+
 		global $phpmailer;
 
 		$to    = str_replace( ' ', '', $to );
@@ -1808,7 +1808,7 @@ class GFCommon {
 
 			if ( ! empty( $phpmailer->ErrorInfo ) ) {
 				GFCommon::log_debug( __METHOD__ . '(): PHPMailer class returned an error message: ' . $phpmailer->ErrorInfo );
-			}			
+			}
 		} else {
 			GFCommon::log_debug( 'GFCommon::send_email(): Aborting. The gform_pre_send_email hook was used to set the abort_email parameter to true.' );
 		}
@@ -3110,9 +3110,12 @@ class GFCommon {
 			 */
 			$disable_print_form_script = apply_filters( 'gform_disable_print_form_scripts', false, $form, $is_ajax );
 
+
 			if ( headers_sent() && ! $disable_print_form_script ) {
 				GFFormDisplay::print_form_scripts( $form, $is_ajax );
 			} else {
+				var_dump($form);
+				die('sdfsdfsdfdsf');
 				GFFormDisplay::enqueue_form_scripts( $form, $is_ajax );
 			}
 		}

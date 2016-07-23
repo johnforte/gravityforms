@@ -265,6 +265,7 @@ class GFEntryDetail {
 				 * @param array   $original_entry The entry object before being updated.
 				 */
 				gf_do_action( array( 'gform_after_update_entry', $form['id'] ), $form, $lead['id'], $original_entry );
+				gf_do_action( array( 'gform_after_update_entry', $form['slug'] ), $form, $lead['id'], $original_entry );
 
 				$lead = RGFormsModel::get_lead( $lead['id'] );
 				$lead = GFFormsModel::set_entry_meta( $lead, $form );
@@ -1377,7 +1378,7 @@ class GFEntryDetail {
 		if ( $allow_display_empty_fields ) {
 			$display_empty_fields = rgget( 'gf_display_empty_fields', $_COOKIE );
 		}
-		
+
 		if ( ! $lead ) {
 			$lead = self::get_current_entry();
 		}

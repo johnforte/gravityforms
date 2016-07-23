@@ -129,6 +129,7 @@ class GFFormDisplay {
                  * @param array $form The Form object
                  */
 				gf_do_action( array( 'gform_pre_submission', $form['id'] ), $form );
+				gf_do_action( array( 'gform_pre_submission', $form['slug'] ), $form );
 
 				//pre submission filter
 				$form = gf_apply_filters( array( 'gform_pre_submission_filter', $form_id ), $form );
@@ -149,6 +150,7 @@ class GFFormDisplay {
                  * @param array $form The Form object
                  */
 				gf_do_action( array( 'gform_after_submission', $form['id'] ), $lead, $form );
+				gf_do_action( array( 'gform_after_submission', $form['slug'] ), $lead, $form );
 
 			} elseif ( $saving_for_later ) {
 				GFCommon::log_debug( 'GFFormDisplay::process_form(): Saving for later.' );
@@ -197,6 +199,7 @@ class GFFormDisplay {
                  * @param array $form The Form object
                  */
 				gf_do_action( array( 'gform_post_submission', $form['id'] ), $lead, $form );
+				gf_do_action( array( 'gform_post_submission', $form['slug'] ), $lead, $form );
 				exit;
 			}
 		}
@@ -224,6 +227,7 @@ class GFFormDisplay {
 		 *                                  For example, when clicking "Next" on page 1, this parameter will be set to 1. When clicking "Previous" on page 2, this parameter will be set to 2.
 		 */
 		gf_do_action( array( 'gform_post_process', $form['id'] ), $form, $page_number, $source_page_number );
+		gf_do_action( array( 'gform_post_process', $form['slug'] ), $form, $page_number, $source_page_number );
 
 	}
 
@@ -404,7 +408,7 @@ class GFFormDisplay {
 
 	/**
 	 * Determine if form has any pages.
-	 * 
+	 *
 	 * @access private
 	 * @static
 	 * @param array $form - The form object
@@ -616,7 +620,6 @@ class GFFormDisplay {
 
 		//reading form metadata
 		$form = GFAPI::get_form( $form_id );
-
 		$form = self::maybe_add_review_page( $form );
 
 		$action = remove_query_arg( 'gf_token' );
@@ -708,7 +711,8 @@ class GFFormDisplay {
                          * @param array $lead The Entry object
                          * @param array $form The Form object
                          */
-						gf_do_action( array( 'gform_post_submission', $form['id'] ), $lead, $form );
+					gf_do_action( array( 'gform_post_submission', $form['id'] ), $lead, $form );
+					 gf_do_action( array( 'gform_post_submission', $form['slug'] ), $lead, $form );
 					} else {
                         /**
                          * Fired after the page changes on a multi-page form
@@ -718,6 +722,7 @@ class GFFormDisplay {
                          * @param int   $submission_info['page_number']        The page that the user is being sent to
                          */
 						gf_do_action( array( 'gform_post_paging', $form['id'] ), $form, $submission_info['source_page_number'], $submission_info['page_number'] );
+					gf_do_action( array( 'gform_post_paging', $form['slug'] ), $form, $submission_info['source_page_number'], $submission_info['page_number'] );
 					}
 				}
 			} elseif ( ! current_user_can( 'administrator' ) && ! $view_counter_disabled ) {
@@ -797,24 +802,24 @@ class GFFormDisplay {
 
 			//Hiding entire form if conditional logic is on to prevent 'hidden' fields from blinking. Form will be set to visible in the conditional_logic.php after the rules have been applied.
 			$style                    = self::has_conditional_logic( $form ) ? "style='display:none'" : '';
-			
+
 			// Split form CSS class by spaces and apply wrapper to each.
 			$custom_wrapper_css_class = '';
 			if ( ! empty( $form_css_class ) ) {
-				
+
 				// Separate the CSS classes.
 				$form_css_classes = explode( ' ', $form_css_class );
-				
+
 				// Append _wrapper to each class.
 				foreach ( $form_css_classes as &$wrapper_class ) {
 					$wrapper_class .= '_wrapper';
 				}
-				
+
 				// Merge back into a string.
 				$custom_wrapper_css_class = ' ' . implode( ' ', $form_css_classes );
-			
+
 			}
-			
+
 			$form_string .= "
                 <div class='{$wrapper_css_class}{$custom_wrapper_css_class}' id='gform_wrapper_$form_id' " . $style . '>';
 
@@ -1679,6 +1684,7 @@ class GFFormDisplay {
 		 * @param bool  $ajax Whether AJAX is on or off (True or False)
 		 */
 		gf_do_action( array( 'gform_pre_enqueue_scripts', $form['id'] ), $form, $ajax );
+    gf_do_action( array( 'gform_pre_enqueue_scripts', $form['slug'] ), $form, $ajax );
 
 		$min = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG || isset( $_GET['gform_debug'] ) ? '' : '.min';
 
@@ -1752,7 +1758,7 @@ class GFFormDisplay {
          * @param bool  $ajax Whether AJAX is on or off (True or False)
          */
 		gf_do_action( array( 'gform_enqueue_scripts', $form['id'] ), $form, $ajax );
-
+		gf_do_action( array( 'gform_enqueue_scripts', $form['slug'] ), $form, $ajax );
 		// enqueue jQuery every time form is displayed to allow 'gform_post_render' js hook
 		// to be available to users even when GF is not using it
 		wp_enqueue_script( 'jquery' );
@@ -2176,7 +2182,7 @@ class GFFormDisplay {
          * @param bool   $is_ajax    Returns true if using AJAX.  Otherwise, false
          */
 		gf_do_action( array( 'gform_register_init_scripts', $form['id'] ), $form, $field_values, $is_ajax );
-
+	        gf_do_action( array( 'gform_register_init_scripts', $form['slug'] ), $form, $field_values, $is_ajax );
 	}
 
 	public static function get_form_init_scripts( $form ) {
@@ -2429,7 +2435,7 @@ class GFFormDisplay {
 			$input_type      = GFFormsModel::get_input_type( $field );
 			$has_price_field = GFCommon::is_product_field( $input_type ) ? true : $has_price_field;
 		}
-		
+
 		return $has_price_field;
 	}
 
@@ -3157,7 +3163,7 @@ class GFFormDisplay {
 
 	/**
 	 * Insert review page into form.
-	 * 
+	 *
 	 * @access public
 	 * @static
 	 * @param array $form - The current Form object
@@ -3179,21 +3185,21 @@ class GFFormDisplay {
 
 		/* Add review page break field to form. */
 		$form['fields'][] = $review_page_break;
-		
+
 		/* Create new HTML field for review page. */
 		$review_page_field             = new GF_Field_HTML();
 		$review_page_field->id         = $new_field_id++;
 		$review_page_field->pageNumber = $page_number;
 		$review_page_field->content    = rgar( $review_page, 'content' );
-		
+
 		/* Add review page field to form. */
 		$form['fields'][] = $review_page_field;
 
 		/* Configure the last page previous button */
 		$form['lastPageButton'] = rgar( $review_page, 'previousButton' );
-				
+
 		return $form;
-		
+
 	}
 
 }

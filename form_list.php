@@ -513,6 +513,7 @@ class GF_Form_List_Table extends WP_List_Table {
 			'is_active'  => '',
 			'title'      => esc_html__( 'Title', 'gravityforms' ),
 			'id'         => esc_html__( 'ID', 'gravityforms' ),
+			'slug'       => esc_html__( 'Slug', 'gravityforms' ),
 			'lead_count' => esc_html__( 'Entries', 'gravityforms' ),
 			'view_count' => esc_html__( 'Views', 'gravityforms' ),
 			'conversion' => esc_html__( 'Conversion', 'gravityforms' ),
@@ -550,7 +551,7 @@ class GF_Form_List_Table extends WP_List_Table {
 				echo "<td $attributes>";
 				do_action( 'gform_form_list_column_' . $column_name, $item );
 				echo $this->handle_row_actions( $item, $column_name, $primary );
-				echo "</td>";				
+				echo "</td>";
 			} elseif ( method_exists( $this, '_column_' . $column_name ) ) {
 				echo call_user_func(
 					array( $this, '_column_' . $column_name ),
@@ -594,6 +595,9 @@ class GF_Form_List_Table extends WP_List_Table {
 
 	function column_id( $form ) {
 		echo '<a href="?page=gf_edit_forms&id='. absint( $form->id ) .'">' .absint( $form->id ) . '</a>';
+	}
+	function column_slug($form){
+		echo $form->slug;
 	}
 
 	function column_view_count( $form ) {
@@ -751,7 +755,7 @@ class GF_Form_List_Table extends WP_List_Table {
 
 					RGFormsModel::trash_form( $form_id );
 					$message = __( 'Form moved to the trash.', 'gravityforms' );
-					break;				
+					break;
 				case 'duplicate' :
 					check_ajax_referer( "gf_duplicate_form_{$form_id}" );
 					RGFormsModel::duplicate_form( $form_id );

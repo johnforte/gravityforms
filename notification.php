@@ -703,17 +703,17 @@ Class GFNotification {
 		<?php $ui_settings['notification_name'] = ob_get_contents();
 		ob_clean(); ?>
 		<?php
-		
+
 		$services = self::get_notification_services();
 		$service_style = count( $services ) == 1 ? "style='display:none'" : '';
-		
+
 		$notification_service = ! rgempty( 'gform_notification_service' ) ? rgpost( 'gform_notification_service' ) : rgar( $notification, 'service' );
 		if ( empty( $notification_service ) ) {
 			$notification_service = key( $services );
 		}
-		
+
 		ob_start(); ?>
-		
+
 		<tr valign="top" <?php echo $service_style; ?>>
 			<th scope="row">
 				<label for="gform_notification_send_via">
@@ -1096,10 +1096,10 @@ Class GFNotification {
 
 		<?php
 		ob_end_clean();
-		
+
 		/**
 		 * Add new or modify existing notification settings that display on the Notification Edit screen.
-		 * 
+		 *
 		 * @param array $ui_settings  An array of settings for the notification UI.
 		 * @param array $notification The current notification object being edited.
 		 * @param array $form         The current form object to which the notification being edited belongs.
@@ -1112,14 +1112,14 @@ Class GFNotification {
 
 	/**
 	 * Get list of notification services.
-	 * 
+	 *
 	 * @access public
 	 * @static
 	 *
 	 * @return array $types
 	 */
 	public static function get_notification_services() {
-		
+
 		$services = array(
 			'wordpress' => array(
 				'label' => esc_html__( 'WordPress', 'gravityforms' ),
@@ -1135,7 +1135,7 @@ Class GFNotification {
 		 * @param array $services The services available
 		 */
 		return gf_apply_filters( array( 'gform_notification_services' ), $services );
-		
+
 	}
 
 	/**
@@ -1143,7 +1143,7 @@ Class GFNotification {
 	 *
 	 * @access public
 	 * @static
-	 * 
+	 *
 	 * @param array $form The current Form Object
 	 *
 	 * @return array $notification_events
@@ -1157,7 +1157,7 @@ Class GFNotification {
 
 		/**
 		 * Allow custom notification events to be added.
-		 * 
+		 *
 		 * @param array $notification_events The notification events.
 		 * @param array $form The current form.
 		 */
@@ -1575,7 +1575,7 @@ class GFNotificationTable extends WP_List_Table {
 		if ( count( $this->notification_services ) > 1 ) {
 			$columns['service'] = esc_html__( 'Service', 'gravityforms' );
 		}
-		
+
 		$this->_column_headers = array(
 			$columns,
 			array(),
@@ -1748,9 +1748,9 @@ class GFNotificationTable extends WP_List_Table {
 	 * @param array $notification The Notification Object
 	 */
 	function column_service( $notification ) {
-		
+
 		$services = $this->notification_services;
-		
+
 		if ( ! rgar( $notification, 'service' ) ) {
 			esc_html_e( 'WordPress', 'gravityforms' );
 		} else if ( rgar( $services, $notification['service'] ) ) {
@@ -1759,7 +1759,7 @@ class GFNotificationTable extends WP_List_Table {
 		} else {
 			esc_html_e( 'Undefined Service', 'gravityforms' );
 		}
-		
+
 	}
 
 	/**

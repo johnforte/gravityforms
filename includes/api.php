@@ -42,6 +42,7 @@ class GFAPI {
 
 		//loading form columns into meta
 		$form_info            = GFFormsModel::get_form( $form_id, true );
+		$form['slug']	      = $form_info->slug;
 		$form['is_active']    = $form_info->is_active;
 		$form['date_created'] = $form_info->date_created;
 		$form['is_trash']     = $form_info->is_trash;
@@ -207,7 +208,7 @@ class GFAPI {
 
 		//updating form title and is_active flag
 		$is_active = rgar( $form, 'is_active' ) ? '1' : '0';
-		$result    = $wpdb->query( $wpdb->prepare( "UPDATE {$form_table_name} SET title=%s, is_active=%s WHERE id=%d", $form['title'], $is_active, $form['id'] ) );
+		$result    = $wpdb->query( $wpdb->prepare( "UPDATE {$form_table_name} SET title=%s, is_active=%s, slug=%s WHERE id=%d", $form['title'], $is_active, $form['id'], sanitize_title($form['title'])));
 		if ( false === $result ) {
 			return new WP_Error( 'error_updating_title', __( 'Error updating title', 'gravityforms' ), $wpdb->last_error );
 		}
